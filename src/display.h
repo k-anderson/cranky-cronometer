@@ -1,0 +1,10 @@
+void setup_display();
+void display_reset();
+void display_string(String string);
+void display_value(uint_fast16_t value);
+void display_brightness(uint8_t brightness);
+void display_blink(uint8_t displayNumber, float rate);
+void display_time_components(uint_fast8_t hours, uint_fast8_t minutes, uint_fast8_t seconds);
+void display_date_components(uint_fast8_t months, uint_fast8_t date, uint_fast16_t years);
+void display_clock();
+void display_birthday();
