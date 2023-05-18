@@ -53,6 +53,7 @@
 
 extern Preferences preferences;
 extern uint_fast32_t timer;
+extern bool randomize_effect;
 
 // WiFiUDP ntpUDP;
 // NTPClient timeClient(ntpUDP);

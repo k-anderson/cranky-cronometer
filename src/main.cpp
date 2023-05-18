@@ -4,6 +4,11 @@
 #include "effects.h"
 #include <Wire.h>
 
+#include <WiFi.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <AsyncElegantOTA.h>
+
 #define I2C_SDA 21
 #define I2C_SCL 22
 
@@ -46,10 +51,15 @@ bool serial_debug = false;
 bool trigger_next_pattern = false;
 u_long trigger_next_palette = 0;
 
+AsyncWebServer server(80);
+
+bool randomize_effect = false;
+
 void setup_hadware();
 void setup_preferences();
 void setup_i2c();
 void setup_state();
+void setup_network();
 void loop();
 void handle_confirm_action();
 bool handle_state_change();
@@ -85,7 +95,7 @@ void setup()
 
   setup_state();
 
-  // WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  setup_network();
 }
 
 void setup_hadware()
@@ -165,6 +175,16 @@ void setup_state()
     state = STOPWATCH_PAUSED;
     break;
   }
+}
+
+void setup_network()
+{
+  WiFi.softAP("cranky-chronometer", "iagreetothetermsandconditions");
+  Serial.println(WiFi.softAPIP());
+
+  AsyncElegantOTA.begin(&server);
+
+  server.begin();
 }
 
 void loop()
@@ -1497,6 +1517,8 @@ void IRAM_ATTR handle_confirm_button()
       break;
     }
   }
+
+  randomize_effect = true;
 
   switch (state)
   {

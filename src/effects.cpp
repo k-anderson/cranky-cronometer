@@ -272,6 +272,8 @@ void effects_loop(uint_fast8_t state)
   static bool do_bells = false;
   static uint8_t bells = 0;
   static CRGB prev_effect_leds[EFFECT_LEDS];
+  static uint8_t prev_pattern_number = 0;
+  static uint16_t frame = 0;
 
   /* on the hours and every 15 minutes change the pattern */
   switch (current_minutes)
@@ -396,9 +398,11 @@ void effects_loop(uint_fast8_t state)
     }
     nblendPaletteTowardPalette(gCurrentPalette, gTargetPalette, 10);
 
-    frame_hue++;
+    bool randomize = prev_pattern_number != current_pattern_number || randomize_effect;
+    gPatterns[current_pattern_number].pattern(frame, randomize);
+    randomize_effect = false;
 
-    gPatterns[current_pattern_number].pattern();
+    prev_pattern_number = current_pattern_number;
 
     /* glitter bomb if the timer is complete */
     if (state == TIMER_RUNNING && timer == 0)
@@ -410,6 +414,12 @@ void effects_loop(uint_fast8_t state)
       add_glitter(50);
     }
     FastLED.show();
+
+    frame++;
+  }
+
+  if (frame > FRAMES_PER_SECOND) {
+    frame = 0;
   }
 }
 
